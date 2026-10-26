@@ -1,0 +1,22 @@
+# Build artifacts and local secrets (no secrets should ever be committed)
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.seed
+wallets/
+vaults/
+node_modules/
+dist/
+build/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
