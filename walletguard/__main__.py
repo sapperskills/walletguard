@@ -17,9 +17,8 @@ import os
 import sys
 import threading
 
-from . import __version__, extensions, feeds, system, watcher
+from . import __version__, feeds, scanner, watcher
 from .alerts import DATA_DIR, LOG_PATH
-from .findings import sort_findings
 
 COLORS = {"critical": "\033[1;41m", "high": "\033[1;31m", "medium": "\033[33m", "low": "\033[36m", "info": "\033[2m"}
 RESET = "\033[0m"
@@ -27,7 +26,7 @@ RESET = "\033[0m"
 
 def cmd_scan(args):
     print(f"WalletGuard {__version__} — scanning (read-only)…\n", flush=True)
-    findings = sort_findings(system.scan_system() + extensions.scan_extensions())
+    findings = scanner.full_scan()
     if args.json:
         print(json.dumps([f.to_dict() for f in findings], indent=1))
         return 0

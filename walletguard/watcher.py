@@ -90,12 +90,34 @@ def check_once(update_baseline=True):
     return events
 
 
+DEEP_CHECK_SECONDS = 600
+
+
+def deep_check():
+    """Wallet integrity and forced/unpacked extensions: slower, so run every few minutes."""
+    from . import integrity, policies
+    found = integrity.scan_integrity() + policies.scan_policies()
+    for f in found:
+        if f.severity in ("critical", "high"):
+            log_event("deep_check_finding", severity=f.severity, title=f.title, detail=f.detail)
+            alert(f.title, f"{f.detail}\n\n{f.fix}", critical=f.severity == "critical",
+                  dedupe_key="deep:" + f.title, quiet_seconds=24 * 3600)
+    return found
+
+
 def run(interval=60, stop_event=None):
+    last_deep = -DEEP_CHECK_SECONDS
     while not (stop_event and stop_event.is_set()):
         try:
             check_once()
         except Exception as e:
             log_event("extension_watch_error", error=repr(e))
+        if time.monotonic() - last_deep >= DEEP_CHECK_SECONDS:
+            last_deep = time.monotonic()
+            try:
+                deep_check()
+            except Exception as e:
+                log_event("deep_check_error", error=repr(e))
         if stop_event:
             stop_event.wait(interval)
         else:

@@ -9,9 +9,8 @@ import os
 import threading
 import time
 
-from . import __version__, alerts, extensions, feeds, system, watcher
+from . import __version__, alerts, feeds, scanner, watcher
 from .alerts import DATA_DIR, LOG_PATH, log_event
-from .findings import sort_findings
 
 user32 = ctypes.WinDLL("user32", use_last_error=True)
 shell32 = ctypes.WinDLL("shell32", use_last_error=True)
@@ -215,7 +214,7 @@ class TrayApp:
         from .report import write_reports
         self._scanning = True
         try:
-            findings = sort_findings(system.scan_system() + extensions.scan_extensions())
+            findings = scanner.full_scan()
             txt, _ = write_reports(findings)
             bad = sum(1 for f in findings if f.severity in ("critical", "high"))
             self.notify("Scan finished",

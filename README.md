@@ -43,6 +43,12 @@ clipboard hijack also gets a top-most pop-up. Threat feeds refresh every 6 hours
   sharing a profile with risky extensions
 - Browser launch tampering: Desktop, Start Menu, taskbar and Run entries that start a browser with
   `--load-extension`, `--remote-debugging-port` and similar flags (tokenised with `CommandLineToArgvW`)
+- Extensions you didn't install yourself: forced by browser policy (`ExtensionInstallForcelist`,
+  `ExtensionSettings`, Firefox `policies.json`), registered by other software, loaded unpacked or from the
+  command line (critical if it reuses a real wallet's ID), and developer mode left on
+- **Wallet integrity:** each wallet extension's code is checked against the hashes the Chrome Web Store
+  published (`_metadata/verified_contents.json`), and against a local baseline, so code patched on disk,
+  injected scripts, or files changed without a version change are caught. Re-checked every 10 minutes by `guard`/tray
 - Desktop wallet data folders (Exodus, Electrum, Atomic, …)
 
 **Offline checkers** (`walletguard/security/`, `check-*` commands)

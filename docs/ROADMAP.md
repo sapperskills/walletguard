@@ -12,14 +12,14 @@ Each item ships with unit tests, a severity rationale and known false positives.
 - Extension watcher: new installs, permissions gained through updates, changed update sources
 - Tray app that starts at logon; threat feeds refreshed every 6 hours
 - Offline checkers for transactions (token/NFT approvals), signing methods, site origins
+- Force-installed, registry-installed, unpacked and command-line extensions; developer mode
+- Wallet extension integrity against the store's published hashes and a local baseline
 
 ## Next
 
-1. **Force-installed extensions:** `ExtensionInstallForcelist` / `ExtensionSettings` policies and Firefox
-   `policies.json`, plus developer-mode and unpacked extensions
-2. **Wallet extension integrity:** hash each wallet extension's files and alert when they change without
-   a version change (local patching by a stealer)
-3. **Live persistence watcher:** alert within a minute on new Run entries, startup files, scheduled tasks,
+1. **Store signature check:** verify the RSA signature on `verified_contents.json` so a stealer can't
+   rewrite the store hashes before the first baseline
+2. **Live persistence watcher:** alert within a minute on new Run entries, startup files, scheduled tasks,
    services, WMI subscriptions, IFEO debuggers and Winlogon changes
 4. **Wallet-file access monitor (admin, opt-in):** audit wallet extension storage and desktop wallet
    folders; alert when a non-browser process reads them (Security event 4663)
