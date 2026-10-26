@@ -1,55 +1,40 @@
-﻿# Milestones, in safety-first order
+﻿# Roadmap
 
-## 0 â€” Current deliverable (implemented and locally tested)
+Goal: the best free, local-only protection for the crypto wallets people already use on Windows.
+Each item ships with unit tests, a severity rationale and known false positives. See
+[GPT_PROMPT.md](GPT_PROMPT.md) for the detailed feature brief.
 
-- Original MIT-licensed local policy prototype; zero secrets, zero telemetry.
-- Decode canonical ERC-20 unlimited/limited allowance requests and NFT operator approvals.
-- Flag unrecognized calldata, risky signature methods, dubious website origins and
-  browser debug/extension launch flags.
-- Offline checkers merged into the working Windows scanner, clipboard guard, extension watcher and tray app.
-- Unit tests for every module, pure logic isolated from Windows collection.
+## Done
 
-## 1 â€” Watch-only wallet applications
+- Read-only scanner: Defender, startup items, scheduled tasks, unsigned AppData processes, browser
+  extensions (fake wallets, risky permissions, wallets sharing a profile), browser launch tampering
+- Clipboard guard: undoes address swaps, warns on look-alike and known-scam addresses and phishing links
+- Extension watcher: new installs, permissions gained through updates, changed update sources
+- Tray app that starts at logon; threat feeds refreshed every 6 hours
+- Offline checkers for transactions (token/NFT approvals), signing methods, site origins
 
-- Choose audited/open-license wallet UI and libraries; produce SBOM.
-- Windows and Android address/watch-only balance UI, configurable RPC and chain display.
-- Explain RPC privacy tradeoffs and threat-feed provenance.
-- Shared read-only token-approval inspector with explicit chain/address/network scope.
-- No signing; testnet synthetic data; negative and error-path tests.
+## Next
 
-## 2 â€” Transaction analysis and pre-sign safeguards
-
-- Real-world transaction simulation with independent RPC validation and honest
-  uncertainty. Decode token, NFT, permit/Permit2, EIP-712, multicalls, proxies.
-- User-approved domain/contract allowlists and rate-limited alerts; never silently
-  mark a transaction safe based on unknown selector or no warnings.
-- Device-local phishing feeds; no URL, wallet address, IP or wallet metadata
-  uploads without explicit user permission. Review feed licensing.
-
-## 3 â€” Signing with independent review
-
-- External/security-reviewed key and signing libraries. Dedicated key boundary,
-  audited hardware-wallet integrations, protected backups and restore workflow.
-- Security audit + fuzz tests before production signing is enabled.
-- Testnet and hardware-wallet staging; independent penetration review.
-
-## 4 â€” Browser and device defense
-
-- EIP-1193 and EIP-6963 extension. Chrome/Edge extensions require review of
-  provider and content-script trust boundaries, permissions and store policies.
-- Connect the wallet to the WalletGuard scanner in this repository (separate process, no key access).
-  Preserve opt-in, reversible changes, no false-positive storms, developer allowlists.
-- Android protections only within platform privacy and sandbox restrictions.
-
-## 5 â€” Store releases
-
-- Microsoft Store and Google Play declarations, organization account eligibility,
-  signing, privacy policy and security review. Verify policies at submission time.
-- CI provenance, SBOM, update signing, reproducible-build strategy, staged rollout.
-- Free/open-source forever; normal chain gas fees still exist.
+1. **Force-installed extensions:** `ExtensionInstallForcelist` / `ExtensionSettings` policies and Firefox
+   `policies.json`, plus developer-mode and unpacked extensions
+2. **Wallet extension integrity:** hash each wallet extension's files and alert when they change without
+   a version change (local patching by a stealer)
+3. **Live persistence watcher:** alert within a minute on new Run entries, startup files, scheduled tasks,
+   services, WMI subscriptions, IFEO debuggers and Winlogon changes
+4. **Wallet-file access monitor (admin, opt-in):** audit wallet extension storage and desktop wallet
+   folders; alert when a non-browser process reads them (Security event 4663)
+5. **Network trust tampering:** hosts entries for wallet/exchange domains, proxies, DNS changes,
+   non-Microsoft root certificates
+6. **Remote-access scam tools:** AnyDesk, TeamViewer, ScreenConnect, RustDesk etc., and RDP, raised to
+   high while a wallet is open
+7. **Fake desktop wallets:** check the code-signing publisher of Exodus, Electrum, Ledger Live, Trezor
+   Suite and others
+8. **Seed-phrase exposure scan (opt-in, local):** find files and screenshots that look like they hold a
+   recovery phrase or private key; report the path only
+9. **Clipboard guard upgrades:** event-driven listener, a trusted-address book from the tray
+10. **Hardening helper (opt-in, reversible):** Controlled Folder Access, Defender ASR rules, SmartScreen
+11. **Token approval audit (opt-in, read-only):** list unlimited approvals for addresses you enter
 
 ## Not planned
 
-- Hosted custody; uploading seeds; in-wallet ads; arbitrary remote AI key access;
-  unattended signing; trading bots with signing permission; security-through-obscurity.
-
+A wallet, key storage or transaction signing of any kind; uploading user data; ads, accounts or payments.

@@ -86,6 +86,5 @@ Near term (device protection):
 - Live persistence watcher: alert the moment a new startup item or scheduled task appears
 - Hosts/proxy/DNS/root-certificate tampering, remote-access scam tools
 
-Longer term: a watch-only, then self-custody wallet with these checks built in, in
-[docs/ROADMAP.md](docs/ROADMAP.md) and [docs/WALLET_ARCHITECTURE.md](docs/WALLET_ARCHITECTURE.md).
-[docs/GPT_PROMPT.md](docs/GPT_PROMPT.md) is the full feature brief.
+Full list in [docs/ROADMAP.md](docs/ROADMAP.md); [docs/GPT_PROMPT.md](docs/GPT_PROMPT.md) is the
+detailed feature brief. WalletGuard protects the wallets you already use; it will never be a wallet itself.

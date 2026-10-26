@@ -1,8 +1,8 @@
 # WalletGuard — engineering instructions
 
 Free, local-first protection for crypto wallets on Windows: a scanner, clipboard guard, extension
-watcher and tray app, plus offline transaction/site checkers. A wallet is a long-term goal
-(docs/ROADMAP.md). Separate from CutShit and Skynet.
+watcher and tray app, plus offline transaction/site checkers. It protects existing wallets and is
+never a wallet itself (docs/ROADMAP.md). Separate from CutShit and Skynet.
 
 Read README.md, SECURITY.md and the source you are changing before editing.
 Tests: `python -m unittest discover -s tests`.
@@ -22,4 +22,4 @@ Tests: `python -m unittest discover -s tests`.
    PowerShell tasks) must not rate high unless several indicators agree.
 7. Every feature: pure logic separated from Win32 with unit tests, a severity rationale, a plain-English
    `fix`, and known false positives. Never word output as a guarantee of safety.
-8. One focused feature per commit/PR. No signing or key-handling code without explicit owner approval.
+8. One focused feature per commit/PR. No wallet, key-handling or signing code: that is out of scope.
