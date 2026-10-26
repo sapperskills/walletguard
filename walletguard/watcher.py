@@ -93,12 +93,16 @@ def check_once(update_baseline=True):
 DEEP_CHECK_SECONDS = 600
 
 
+_reported = set()
+
+
 def deep_check():
     """Wallet integrity and forced/unpacked extensions: slower, so run every few minutes."""
     from . import integrity, policies
     found = integrity.scan_integrity() + policies.scan_policies()
     for f in found:
-        if f.severity in ("critical", "high"):
+        if f.severity in ("critical", "high") and f.title not in _reported:
+            _reported.add(f.title)  # once per run of the tray; the scan report still lists it
             log_event("deep_check_finding", severity=f.severity, title=f.title, detail=f.detail)
             alert(f.title, f"{f.detail}\n\n{f.fix}", critical=f.severity == "critical",
                   dedupe_key="deep:" + f.title, quiet_seconds=24 * 3600)

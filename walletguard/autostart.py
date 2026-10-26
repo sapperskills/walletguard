@@ -42,6 +42,21 @@ def current():
         return None
 
 
+def inside_app_container():
+    """True when started from inside a packaged desktop app (for example an AI coding agent in the
+    Claude desktop app). Windows then silently redirects AppData and HKCU writes into that app's
+    private storage, so reports and the Run entry would be invisible to the rest of Windows."""
+    if os.environ.get("CLAUDECODE"):
+        return True
+    import ctypes
+    n = ctypes.c_uint32(0)
+    try:
+        rc = ctypes.windll.kernel32.GetCurrentPackageFullName(ctypes.byref(n), None)
+    except (AttributeError, OSError):
+        return False
+    return rc != 15700  # APPMODEL_ERROR_NO_PACKAGE
+
+
 def start_now(kill=False):
     """Launch the tray detached from this console. A second copy exits on its own."""
     args = [pythonw(), LAUNCHER] + (["--kill"] if kill else [])

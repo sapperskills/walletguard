@@ -24,6 +24,11 @@ python -m walletguard check-browser-args -- --remote-debugging-port=9222
 
 ## Tray icon
 
+> Run `install` (or start `WalletGuard.pyw`) from your own terminal or Explorer, not from inside another
+> app such as an AI coding agent. Windows redirects a packaged app's AppData and registry writes into its
+> private storage, so reports and the logon entry would be invisible to Notepad and to Windows at logon.
+> `install` refuses to run in that situation.
+
 `install` adds a `WalletGuard` value to `HKCU\...\CurrentVersion\Run` that launches `WalletGuard.pyw`
 with `pythonw.exe` (no console window). Only one copy runs at a time. Right-click the shield for:
 pause/resume the clipboard guard, run a scan (opens the report if anything is high-risk), update threat

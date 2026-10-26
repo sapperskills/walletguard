@@ -84,6 +84,11 @@ def cmd_tray(args):
 
 def cmd_install(args):
     from . import autostart
+    if autostart.inside_app_container():
+        print("Not installing: this was started from inside another app's sandbox (e.g. an AI agent), so\n"
+              "Windows would redirect the logon entry and reports into that app's private storage.\n"
+              "Run this command from your own PowerShell or Command Prompt instead.", file=sys.stderr)
+        return 1
     print("Starts at logon with:", autostart.install(kill=args.kill))
     if not args.no_start:
         autostart.start_now(kill=args.kill)
