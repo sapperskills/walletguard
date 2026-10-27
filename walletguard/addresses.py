@@ -14,7 +14,7 @@ B58 = "1-9A-HJ-NP-Za-km-z"
 # Bech32 prefixes -> chain names. Any other prefix with a valid bech32 checksum is still
 # recognised (as "bech32/<prefix>"), which covers every Cosmos SDK chain automatically.
 BECH32_CHAINS = {
-    "bc": "BTC", "ltc": "LTC", "addr": "ADA",
+    "bc": "BTC", "ltc": "LTC", "tb": "BTC testnet", "addr": "ADA",
     "cosmos": "Cosmos Hub", "osmo": "Osmosis", "juno": "Juno", "stars": "Stargaze", "inj": "Injective",
     "sei": "Sei", "celestia": "Celestia", "dydx": "dYdX", "akash": "Akash", "kava": "Kava", "terra": "Terra",
     "secret": "Secret", "axelar": "Axelar", "noble": "Noble", "stride": "Stride", "neutron": "Neutron",
@@ -83,7 +83,7 @@ def analyze(text):
         d = cs.bech32_decode(t)
         if d:
             hrp, data5, variant = d
-            if hrp in ("bc", "ltc"):
+            if hrp in ("bc", "ltc", "tb"):
                 if not cs.segwit_valid(hrp, data5, variant):
                     return None
             elif variant != "bech32":
