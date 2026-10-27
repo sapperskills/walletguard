@@ -16,7 +16,7 @@ ETH_LOOKALIKE = "0x5290aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa9EE7"
 BTC = "bc1qar0srrr7xfkvy5l643lydnw9re59gtzzwf5mdq"
 BTC_LEGACY = "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"
 SOL = "7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV"
-TRON = "TN3W4H6rK2ce4vX9YnFQHwKENnHjoxb3m9"
+TRON = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t"
 
 
 class Addresses(unittest.TestCase):

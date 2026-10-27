@@ -40,7 +40,8 @@ class ClipboardPolicy:
         self.last_time = 0.0
 
     def observe(self, text, now):
-        chain = addresses.classify(text) if text else None
+        info = addresses.analyze(text) if text else None
+        chain = info.chain if info else None
         if not chain:
             if text and self.intel:
                 dom = self.intel.bad_domain(text)
@@ -66,6 +67,12 @@ class ClipboardPolicy:
                                   f"({addresses.short(prev)}) but is different. Address-poisoning scams "
                                   "use look-alike addresses. Check every character.",
                                   original=prev, replacement=addr, chain=chain)
+
+        if info.checksum == "invalid":
+            verdict = Verdict("warn",
+                              f"This {chain} address has a broken checksum: some letters' upper/lower case is "
+                              "wrong, so it was mistyped or altered. Don't send to it; copy it again from the source.",
+                              replacement=addr, chain=chain)
 
         if self.intel and self.intel.bad_address(addr):
             verdict = Verdict("warn", f"This {chain} address is on a public scam list. Do NOT send funds to it.",

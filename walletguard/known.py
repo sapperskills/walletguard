@@ -5,24 +5,79 @@ import os
 LOCAL = os.environ.get("LOCALAPPDATA", "")
 ROAMING = os.environ.get("APPDATA", "")
 
-# Official store IDs of popular wallet extensions. An extension whose *name*
-# looks like a wallet but whose ID is not here is treated as a possible fake.
+# Official store IDs of wallet extensions. Each was checked against its Chrome Web Store
+# listing URL (or, for MetaMask on Edge and Solflare, a store-signed install) on 2026-10-26.
+# An extension whose *name* looks like a wallet but whose ID is not here may be a fake.
 WALLET_EXTENSIONS = {
+    # Multichain / EVM
     "nkbihfbeogaeaoehlefnkodbefgpgknn": "MetaMask (Chrome)",
     "ejbalbakoplchlghecdalmeeeajnimhm": "MetaMask (Edge)",
-    "bfnaelmomeimhlpmgjnjophhpkkoljpa": "Phantom",
-    "bhhhlbepdkbapadjdnnojkbgioiodbic": "Solflare",
     "hnfanknocfeofbddgcijnmhnfnkdnaad": "Coinbase Wallet",
     "egjidjbpglichdcondbcbdnbeeppgdph": "Trust Wallet",
     "acmacodkjbdgmoleebolmdjonilkdbch": "Rabby",
-    "dmkamcknogkgcdfhhbddcghachkejeap": "Keplr",
     "mcohilncbfahbmgdjkbpemcciiolgcge": "OKX Wallet",
-    "aflkmfhebedbjioipglgcbcmnbpgliof": "Backpack",
+    "jiidiaalihmmhddjgbnbgdfflelocpak": "Bitget Wallet",
+    "klghhnkeealcohjjanjjdaeeggmfmlpl": "Zerion",
+    "opfgelmcmbiajamepnmloijbpoleiama": "Rainbow",
+    "eajafomhmkipbjmfmhebemolkcicgfmd": "Taho",
+    "nnpmfplkfogfpmcngplhnbdnnilmcdcg": "Uniswap Extension",
+    "ehgjhhccekdedpbkifaojjaefeohnoea": "Ambire",
+    "heamnjbnflcikcggoiplibfommfbkjpj": "Zeal",
+    "hifafgmccdpekplomjjkcfgodnhcellj": "Crypto.com Onchain",
+    "agoakfejjabomempkjlepdflaleeobhb": "Core (Avalanche)",
+    "kkpllkodjeloidieedojogacfhpaihoh": "Enkrypt",
+    "aeachknmefphepccionboohckonoeemg": "Coin98",
+    "hmeobnfnfcmdkdcmlblgagmfpfboieaf": "Ctrl (XDEFI)",
     "aholpfdialjgjfhomihkjbmgjidlcdno": "Exodus Web3",
-    "ibnejdfjmmkpcnlpebklmnkoeoihofec": "TronLink",
+    "gjnckgkfmgmibbkoficdidcljeaaaheg": "Atomic Wallet",
+    "hpglfhgfnhbgpjdenjgmdgoeiappafln": "Guarda",
+    "fiikommddbeccaoicoejoniammnalkfa": "Nightly",
     "fnjhmkhhmkbjkkabndcnnogagogbneec": "Ronin",
+    "ffondjhiilhjpmfakjbejdgbemolaaho": "VeWorld (VeChain)",
+    # Solana
+    "bfnaelmomeimhlpmgjnjophhpkkoljpa": "Phantom",
+    "bhhhlbepdkbapadjdnnojkbgioiodbic": "Solflare",
+    "aflkmfhebedbjioipglgcbcmnbpgliof": "Backpack",
+    # Bitcoin
     "ppbibelpcjmhbdihakflkdcoccbgbkpo": "UniSat",
     "idnnbdplmphpflfnlkomgpfbpcgelopg": "Xverse",
+    "ldinpeekobnhjjdofggfgjlcehhmanlj": "Leather",
+    "mlbnicldlpdimbjdcncnklfempedeipj": "Yours (BSV)",
+    # Cosmos
+    "dmkamcknogkgcdfhhbddcghachkejeap": "Keplr",
+    "fcfcfllfndlomdhbehjjcoimbgofdncg": "Leap",
+    "fpkhgmpbidmiogeglndfbkegfdlnajnf": "Cosmostation",
+    "anokgmphncpekkhclmingpimjmcooifb": "Compass (Sei)",
+    # Sui / Aptos
+    "opcgpfmipidbgpenhmajoajpbobppdil": "Slush (Sui Wallet)",
+    "lfcmbodjdaklmnbanalifjjnkldngine": "Suiet",
+    "ejjladinnckdgjemekebdpeokbikhfci": "Petra (Aptos)",
+    "efbglgofoippbgcjepnhiblaibcnclgk": "Martian",
+    "phkbamefinggmakgklpkljjmgibohnba": "Pontem",
+    # TON
+    "omaabbefbmiijedngplfjmnooppbclkk": "Tonkeeper",
+    "fldfpgipfncgndfolcbkdeeknbbbnhcc": "MyTonWallet",
+    # Cardano
+    "gafhhkghbfjjkeiendhlofajokpaflmk": "Lace",
+    "kmhcihpebfmpgmihbkipmjlmmioameka": "Eternl",
+    "lpfcbjknijpeeillifnkikgncikgfhdo": "Nami",
+    "ffnbelfdoeiohenkjibnmadjiehjhajb": "Yoroi",
+    "kfdniefadaanbjodldohaedphafoffoh": "Typhon",
+    "nhbicdelgedinnbcidconlnfeionhbml": "Begin",
+    # Polkadot
+    "fijngjgcjhjmmpcmkeiomlglpeiijkld": "Talisman",
+    "onhogfjeacnfoofkfgppdlbmlmnplgbn": "SubWallet",
+    "ginchbkmljhldofnbjabmeophlhdldgp": "PolkaGate",
+    "nhlnehondigmgckngjomcpcefcdplmgc": "Fearless",
+    # Starknet
+    "jnlgamecbpmbajjfhmmmlhejkemejdma": "Braavos",
+    "dlcobpjiigpikoobohmabehhmhfoodbb": "Ready (Argent X)",
+    # Stellar
+    "bcacfldlkkdogcmkkibnjlakofdplcbk": "Freighter",
+    "ldiagbjmlmjiieclmdkagofdjcgodjle": "LOBSTR",
+    "hgmoaheomcjnaheggkfafnjilfcefbmo": "Rabet",
+    # Tron
+    "ibnejdfjmmkpcnlpebklmnkoeoihofec": "TronLink",
 }
 
 FIREFOX_WALLETS = {
@@ -32,8 +87,9 @@ FIREFOX_WALLETS = {
 WALLET_NAME_WORDS = (
     "wallet", "metamask", "phantom", "solflare", "coinbase", "trust", "rabby",
     "keplr", "okx", "exodus", "ledger", "trezor", "tronlink", "seed", "crypto",
-    "bitcoin", "ethereum", "solana", "web3", "defi", "airdrop",
-)
+    "bitcoin", "ethereum", "solana", "web3", "defi", "airdrop", "keplr", "tonkeeper", "eternl", "yoroi",
+    "subwallet", "polkadot", "braavos", "bitget", "zerion", "xverse", "unisat",
+)  # generic words (lace, leap, rainbow, atomic…) left out: too many unrelated extensions use them
 
 CHROMIUM_BROWSERS = {
     "Chrome": os.path.join(LOCAL, r"Google\Chrome\User Data"),

@@ -42,6 +42,9 @@ clipboard hijack also gets a top-most pop-up. Threat feeds refresh every 6 hours
 - Startup items, startup-folder shortcuts (resolved to their target) and non-Microsoft scheduled tasks:
   encoded PowerShell, hidden script launchers, unsigned or user-folder executables, dead entries
 - Unsigned programs running from AppData/Temp, and whether they're connected to the internet
+- Knows the official IDs of 58 wallet extensions (MetaMask, Phantom, Solflare, Rabby, Keplr, Leap, Petra,
+  Slush, Tonkeeper, Lace, Eternl, Talisman, SubWallet, Braavos, Argent, Freighter, Bitget, Zerion, …), each
+  checked against its Chrome Web Store listing, so a copy with a different ID is spotted as a possible fake
 - Every Chrome / Edge / Brave / Vivaldi / Opera / Firefox extension in every profile:
   fake wallets (wallet-like name, unknown ID), sideloaded installs, code injected into every site,
   dangerous permissions (`management`, `proxy`, `cookies`, `debugger`, clipboard…), and wallets
@@ -63,7 +66,13 @@ clipboard hijack also gets a top-most pop-up. Threat feeds refresh every 6 hours
   browser argument lists
 
 **Clipboard guard** (`guard`)
-- Recognises EVM, BTC, LTC, TRON, DOGE, XMR, XRP and Solana addresses
+- Recognises addresses on 30+ chains, **validating each format's checksum** so ordinary text and typos are
+  never mistaken for an address: Ethereum and every EVM chain (EIP-55), Bitcoin (legacy, P2SH, SegWit,
+  Taproot per BIP-173/350), Solana, Tron, Litecoin, Dogecoin, Dash, Zcash, Bitcoin Cash and Kaspa
+  (CashAddr), XRP, Stellar, TON, Cardano, Polkadot/Kusama/Substrate (SS58), Algorand, Monero,
+  Sui/Aptos/Starknet, every Cosmos SDK chain (Cosmos Hub, Osmosis, Injective, Sei, Celestia, dYdX, …),
+  plus `.eth`, `.sol`, `.ton` and `.near` names
+- An EVM address whose mixed-case checksum is wrong (mistyped or altered) → warning
 - If a copied address is replaced by a different one of the same chain within 1.5 s, it is a clipper:
   the original is put back, the program that wrote the clipboard is named (and killed with `--kill`), and you get a pop-up
 - Look-alike addresses (same first/last 4 characters, the address-poisoning trick) → warning
