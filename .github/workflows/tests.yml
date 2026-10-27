@@ -2,6 +2,7 @@ name: tests
 
 on:
   push:
+    branches: [main]  # PR branches are covered by pull_request; don't run twice
   pull_request:
 
 permissions:
