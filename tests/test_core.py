@@ -137,6 +137,29 @@ class Extensions(unittest.TestCase):
         self.assertEqual(events[0][0], "critical")
 
 
+class TrayReports(unittest.TestCase):
+    def test_latest_report_picks_newest_txt(self):
+        from walletguard import tray
+        with tempfile.TemporaryDirectory() as d:
+            for name in ("scan-20261026-100000.txt", "scan-20261026-120000.txt",
+                         "scan-20261026-130000.json", "events.log"):
+                open(os.path.join(d, name), "w").close()
+            old, tray.DATA_DIR = tray.DATA_DIR, d
+            try:
+                self.assertEqual(os.path.basename(tray.latest_report()), "scan-20261026-120000.txt")
+            finally:
+                tray.DATA_DIR = old
+
+    def test_no_reports(self):
+        from walletguard import tray
+        with tempfile.TemporaryDirectory() as d:
+            old, tray.DATA_DIR = tray.DATA_DIR, d
+            try:
+                self.assertIsNone(tray.latest_report())
+            finally:
+                tray.DATA_DIR = old
+
+
 class BrowserLaunch(unittest.TestCase):
     def test_windows_tokenising(self):
         from walletguard.system import split_command_line

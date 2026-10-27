@@ -6,6 +6,7 @@ Pure ctypes (Shell_NotifyIconW), so it needs nothing beyond the standard library
 import ctypes
 import ctypes.wintypes as wt
 import os
+import subprocess
 import threading
 import time
 
@@ -38,7 +39,8 @@ TPM_RIGHTBUTTON, TPM_RETURNCMD, TPM_NONOTIFY = 0x2, 0x100, 0x80
 IDI_SHIELD = 32518
 IDI_WARNING = 32515
 
-CMD_PAUSE, CMD_SCAN, CMD_LOG, CMD_REPORTS, CMD_FEEDS, CMD_EXIT = range(1, 7)
+CMD_PAUSE, CMD_SCAN, CMD_LOG, CMD_REPORTS, CMD_FEEDS, CMD_EXIT, CMD_LATEST = range(1, 8)
+_app = None  # the running TrayApp, for notifications from helpers
 FEED_REFRESH_SECONDS = 6 * 3600
 MUTEX_NAME = "Local\\WalletGuardTray"
 
@@ -174,6 +176,7 @@ class TrayApp:
         user32.AppendMenuW(m, MF_STRING, CMD_PAUSE, "Resume clipboard guard" if paused else "Pause clipboard guard")
         user32.AppendMenuW(m, MF_STRING | (MF_GRAYED if self._scanning else 0), CMD_SCAN,
                            "Scanning…" if self._scanning else "Run security scan now")
+        user32.AppendMenuW(m, MF_STRING | (0 if latest_report() else MF_GRAYED), CMD_LATEST, "Open latest report")
         user32.AppendMenuW(m, MF_STRING, CMD_FEEDS, "Update threat feeds")
         user32.AppendMenuW(m, MF_STRING, CMD_LOG, "Open event log")
         user32.AppendMenuW(m, MF_STRING, CMD_REPORTS, "Open reports folder")
@@ -205,6 +208,8 @@ class TrayApp:
             _open(LOG_PATH)
         elif cmd == CMD_REPORTS:
             _open(DATA_DIR)
+        elif cmd == CMD_LATEST:
+            _open(latest_report() or DATA_DIR)
         elif cmd == CMD_EXIT:
             user32.DestroyWindow(self.hwnd)
 
@@ -218,7 +223,8 @@ class TrayApp:
             txt, _ = write_reports(findings)
             bad = sum(1 for f in findings if f.severity in ("critical", "high"))
             self.notify("Scan finished",
-                        f"{bad} high-risk item(s) found. Opening the report." if bad else "No high-risk items found.",
+                        f"{bad} high-risk item(s) found. Opening the report." if bad else
+                        "No high-risk items found. Right-click → Open latest report for details.",
                         critical=bool(bad))
             if bad:
                 _open(txt)
@@ -278,6 +284,9 @@ class TrayApp:
         return user32.DefWindowProcW(hwnd, msg, wparam, lparam)
 
     def run(self):
+        global _app
+        _app = self
+        ctypes.windll.ole32.CoInitialize(None)  # shell calls from this thread expect COM
         hinst = kernel32.GetModuleHandleW(None)
         wc = WNDCLASSEXW()
         wc.cbSize = ctypes.sizeof(WNDCLASSEXW)
@@ -308,10 +317,30 @@ class TrayApp:
 
 
 def _open(path):
+    """Open a folder in Explorer or a text file in Notepad.
+
+    Not os.startfile: ShellExecute needs COM set up on the calling thread to open folders,
+    and failed silently from the tray. Launching the program directly avoids that."""
     try:
-        os.startfile(path)
+        if os.path.isdir(path):
+            subprocess.Popen(["explorer.exe", path])
+        elif os.path.isfile(path) and path.lower().endswith((".txt", ".log", ".json")):
+            subprocess.Popen(["notepad.exe", path])
+        elif os.path.exists(path):
+            os.startfile(path)
+        else:
+            log_event("open_missing", path=path)
+            _app.notify("Nothing to open yet", f"{path} doesn't exist yet.") if _app else None
+    except OSError as e:
+        log_event("open_failed", path=path, error=repr(e))
+
+
+def latest_report():
+    try:
+        reports = [f for f in os.listdir(DATA_DIR) if f.startswith("scan-") and f.endswith(".txt")]
     except OSError:
-        pass
+        return None
+    return os.path.join(DATA_DIR, max(reports)) if reports else None
 
 
 def main(kill=False, interval=60, offline=False):
