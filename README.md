@@ -1,5 +1,7 @@
 # WalletGuard
 
+[![tests](https://github.com/sapperskills/walletguard/actions/workflows/tests.yml/badge.svg)](https://github.com/sapperskills/walletguard/actions/workflows/tests.yml)
+
 Detects and blocks attacks on crypto wallets on Windows. Pure Python standard library, no installs needed.
 Free, local-only, no telemetry. MIT licensed.
 
