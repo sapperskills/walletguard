@@ -47,5 +47,5 @@ malware, real seed phrases or real funds in tests. Run `python -m unittest disco
 
 ## Reporting a vulnerability
 
-Do not open a public issue with exploit details. Contact the repository owner privately. Never send
-anyone your seed phrase, including for debugging.
+Do not open a public issue with exploit details. Use **Report a vulnerability** on this repository's
+Security tab (GitHub private vulnerability reporting). Never send anyone your seed phrase, including for debugging.
