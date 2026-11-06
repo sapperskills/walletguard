@@ -25,6 +25,12 @@ def check():                  # 3. glue, registered in walletguard/scanner.py CH
 Then add one line to `CHECKS` in [`walletguard/scanner.py`](../walletguard/scanner.py). Both
 `python -m walletguard scan` and the tray pick it up.
 
+For a metadata-based detector with bounded filesystem collection and correlated severity, see
+[`walletguard/supply_chain.py`](../walletguard/supply_chain.py), its fixture tests in
+[`tests/test_supply_chain.py`](../tests/test_supply_chain.py), and the
+[coverage and false-positive notes](SUPPLY_CHAIN.md). Keep raw scripts, commands and credentials
+out of findings; report only the metadata needed for review.
+
 ## A good `Finding`
 
 `Finding(severity, category, title, detail, fix, data)`
