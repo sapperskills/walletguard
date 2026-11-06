@@ -1,0 +1,6 @@
+{
+  "rea-agents": {"repositories": ["github.com/morluto/rea"], "publishers": []},
+  "@anthropic-ai/claude-code": {"repositories": [], "publishers": []},
+  "@openai/codex": {"repositories": [], "publishers": []},
+  "@google/gemini-cli": {"repositories": [], "publishers": []}
+}

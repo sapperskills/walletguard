@@ -1,6 +1,6 @@
 """The full read-only scan, shared by the CLI and the tray."""
 
-from . import clipboard_history, extensions, integrity, policies, system
+from . import clipboard_history, extensions, integrity, policies, supply_chain, system
 from .findings import Finding, sort_findings
 
 # To add a detector: write a module with check() -> [Finding] (see docs/WRITING_A_DETECTOR.md)
@@ -10,6 +10,7 @@ CHECKS = (
     ("policies", policies.scan_policies),
     ("integrity", integrity.scan_integrity),
     ("clipboard history", clipboard_history.check),
+    ("supply chain", supply_chain.check),
 )
 
 

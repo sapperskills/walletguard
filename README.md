@@ -60,6 +60,10 @@ clipboard hijack also gets a top-most pop-up. Threat feeds refresh every 6 hours
   published (`_metadata/verified_contents.json`), and against a local baseline, so code patched on disk,
   injected scripts, or files changed without a version change are caught. Re-checked every 10 minutes by `guard`/tray
 - Desktop wallet data folders (Exodus, Electrum, Atomic, …)
+- Developer supply-chain review: look-alike AI CLI package names, unofficial repository/publisher
+  claims, recent shell/download install hooks in npm globals and npx caches, and unusual script Run
+  entries. Known developer paths stay low unless several indicators agree. See
+  [coverage, severity and editable official-name rules](docs/SUPPLY_CHAIN.md).
 
 **Offline checkers** (`walletguard/security/`, `check-*` commands)
 - EVM transactions: unlimited and limited ERC-20 `approve`, NFT `setApprovalForAll`, native value,
