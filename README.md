@@ -11,6 +11,7 @@ Free, local-only, no telemetry. MIT licensed.
 
 ```
 python -m walletguard scan            # read-only security report (exit code 2 if anything high/critical)
+python -m walletguard scan --explain  # opt-in commentary from your local Ollama (Skynet)
 python -m walletguard guard           # live protection: clipboard guard + extension watcher
 python -m walletguard guard --kill    # ...and terminate any program caught swapping addresses
 python -m walletguard update-feeds    # refresh scam-address / phishing-domain lists
@@ -89,6 +90,41 @@ clipboard hijack also gets a top-most pop-up. Threat feeds refresh every 6 hours
   gain permissions through an update, changed update sources, and wallets that disappear
 
 Data, baselines, scan reports and the event log live in `%LOCALAPPDATA%\WalletGuard`.
+
+## Optional local AI triage
+
+`scan --explain` asks your running Ollama (Skynet) for plain-English explanations and a
+suggested review rank under each finding. It uses the same `/api/chat`, non-streaming protocol
+as `tools/wgbot`, with model `qwen3.6:35b` by default. Install the model yourself in Ollama;
+WalletGuard does not download models or start Ollama.
+
+```
+python -m walletguard scan --explain --ollama-endpoint http://192.168.1.20:11434 --ollama-model qwen3.6:35b
+```
+
+The default endpoint is `http://127.0.0.1:11434`. You can also set
+`WALLETGUARD_OLLAMA_ENDPOINT` and `WALLETGUARD_OLLAMA_MODEL`. These settings cause no
+network traffic unless you pass `--explain`. Only loopback and private LAN IP literals
+(or `localhost`) are accepted. Public addresses, DNS hostnames, credentials, URL paths,
+queries and fragments are refused. Proxies and redirects are never used. LAN requests
+send metadata to that configured machine; choose a machine you control.
+
+Only finding type, severity, an explicit filesystem path where available, and a fixed,
+conservative evidence summary leave WalletGuard. Raw titles, details, commands, exception
+messages, file contents and other finding data are excluded. The AI feature opens no files
+and never accesses wallet contents or secrets. Summaries deliberately omit detector detail
+that could contain sensitive text. At most the first 100 findings are explained per scan.
+
+Responses appear as **AI commentary (unverified; not a safety verdict)** under each visible
+finding; JSON reports use `ai_commentary`. Detector severity, order, rationale, fixes and
+exit behavior stay unchanged. If Ollama is unreachable, times out (15 seconds), has no such
+model or returns an invalid response, the original scan report is used. A refused endpoint
+also prints a brief warning. Without `--explain`, scanning behaves as before.
+
+AI commentary can be wrong or suggest an unhelpful order. It never establishes safety;
+follow the detector's fix and review its evidence locally. Legitimate development tools,
+automation, sideloaded extensions and missing store metadata can produce false positives.
+This feature adds no detector or severity rule; existing detector rationales still apply.
 
 ## Threat feeds
 

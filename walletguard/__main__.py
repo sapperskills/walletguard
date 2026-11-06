@@ -27,10 +27,20 @@ RESET = "\033[0m"
 def cmd_scan(args):
     print(f"WalletGuard {__version__} — scanning (read-only)…\n", flush=True)
     findings = scanner.full_scan()
+    commentary = {}
+    if getattr(args, "explain", False):
+        from . import triage
+        try:
+            commentary = triage.explain(findings, args.ollama_endpoint, args.ollama_model)
+        except ValueError:
+            print("AI commentary unavailable: endpoint refused; use a loopback or private LAN IP.",
+                  file=sys.stderr)
+    report = [dict(f.to_dict(), **({"ai_commentary": commentary[i]} if i in commentary else {}))
+              for i, f in enumerate(findings)]
     if args.json:
-        print(json.dumps([f.to_dict() for f in findings], indent=1))
+        print(json.dumps(report, indent=1))
         return 0
-    for f in findings:
+    for i, f in enumerate(findings):
         if f.severity == "info" and not args.verbose:
             continue
         c = COLORS.get(f.severity, "") if sys.stdout.isatty() else ""
@@ -39,12 +49,14 @@ def cmd_scan(args):
             print(f"           {f.detail}")
         if f.fix:
             print(f"           → {f.fix}")
+        if i in commentary:
+            print(f"           AI commentary (unverified; not a safety verdict): {commentary[i]}")
     counts = {s: sum(1 for f in findings if f.severity == s) for s in COLORS}
     print("\nSummary: " + ", ".join(f"{n} {s}" for s, n in counts.items() if n))
     os.makedirs(DATA_DIR, exist_ok=True)
     out = os.path.join(DATA_DIR, f"scan-{datetime.datetime.now():%Y%m%d-%H%M%S}.json")
     with open(out, "w", encoding="utf-8") as fh:
-        json.dump([f.to_dict() for f in findings], fh, indent=1)
+        json.dump(report, fh, indent=1)
     print(f"Full report: {out}")
     return 2 if counts["critical"] or counts["high"] else 0
 
@@ -131,6 +143,10 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     s = sub.add_parser("scan", help="one-off read-only security report")
     s.add_argument("--json", action="store_true")
+    s.add_argument("--explain", action="store_true", help="opt in to local Ollama AI commentary")
+    s.add_argument("--ollama-endpoint", default=os.environ.get("WALLETGUARD_OLLAMA_ENDPOINT", "http://127.0.0.1:11434"),
+                   help="Ollama http(s)://loopback-or-LAN-IP:port (only used with --explain)")
+    s.add_argument("--ollama-model", default=os.environ.get("WALLETGUARD_OLLAMA_MODEL", "qwen3.6:35b"))
     s.add_argument("-v", "--verbose", action="store_true", help="also show info items")
     s.set_defaults(func=cmd_scan)
     g = sub.add_parser("guard", help="live clipboard guard + extension watcher")
